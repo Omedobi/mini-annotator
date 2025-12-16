@@ -1,0 +1,6 @@
+*.pt
+data/cache/
+data/exports/*
+runs/
+*.ipynb_checkpoints/
+.env    ## virtual env
