@@ -1,5 +1,14 @@
-person
-car
-bicycle
-cat
-dog
+button
+cancel icon
+components
+componentsb
+dope 
+dopeb
+dropdown
+hamburger icon
+input field 
+loading icon
+love icon
+radio
+search icon
+share icon

@@ -7,18 +7,30 @@ import hashlib
 import pathlib
 from dataclasses import dataclass
 from typing import List, Dict, Optional, Tuple, Any
-
 import torch
+import tensorflow
 import numpy as np
 import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
-
+from ultralytics import YOLO
 import streamlit as st
 
-# -------- Config & Paths --------
 
 DEFAULT_LABELS = [
-    "cat", "dog", "car", "truck", "bicycle", "person", "tree", "house"
+"button",
+"cancel icon",
+"components",
+"componentsb",
+"dope", 
+"dopeb",
+"dropdown",
+"hamburger icon",
+"input field", 
+"loading icon",
+"love icon",
+"radio",
+"search icon",
+"share icon",
 ]
 
 APP_DIR = pathlib.Path(__file__).resolve().parent
@@ -34,7 +46,7 @@ os.makedirs(DET_EMB_DIR, exist_ok=True)
 os.makedirs(CACHE_DIR, exist_ok=True)
 os.makedirs(COCO_DIR, exist_ok=True)
 
-# -------- Utilities --------
+
 
 def sha1_path(p: pathlib.Path) -> str:
     return hashlib.sha1(str(p).encode("utf-8")).hexdigest()
@@ -86,7 +98,7 @@ def load_image(path: pathlib.Path, max_side: int = 768) -> Image.Image:
         img = img.resize((max(1, int(w * scale)), max(1, int(h * scale))), Image.BICUBIC)
     return img
 
-# -------- Zero-shot Classifier (CLIP) --------
+# Zero-shot Classifier
 
 class ZeroShotLabeler:
     def __init__(self, model_name: str = "ViT-B-32", pretrained: str = "openai", device: Optional[str] = None):
@@ -127,14 +139,13 @@ class ZeroShotLabeler:
         logits = (img_emb @ text_emb.t()).squeeze(0)
         return logits.detach().float().cpu().numpy()
 
-# -------- Detector (Ultralytics RT-DETR / YOLOv8) --------
+# Detector (Ultralytics RT-DETR / YOLOv8)
 
 class Detector:
     """
     Wrap Ultralyics models; cache outputs. Keeps UI responsive.
     """
     def __init__(self, model_name: str, device: Optional[str], conf: float, iou: float, max_det: int):
-        from ultralytics import YOLO  # lazy
         self.device = (None if device == "auto" else device)
         self.model_name = model_name
         try:
@@ -188,7 +199,7 @@ class Detector:
             })
         return {"width": W, "height": H, "detections": dets}
 
-# -------- Active Selection --------
+# Active Selection
 
 def uncertainty_margin(probs: np.ndarray) -> float:
     s = np.sort(probs)[::-1]
@@ -208,7 +219,7 @@ def rank_images_by_uncertainty(paths: List[pathlib.Path], model: ZeroShotLabeler
     scores.sort(key=lambda x: x[1], reverse=True)
     return scores
 
-# -------- Visualization --------
+# Visualization
 
 def draw_boxes(img: Image.Image, boxes: List[Dict], selected_ids: Optional[List[int]] = None) -> Image.Image:
     """
@@ -228,7 +239,7 @@ def draw_boxes(img: Image.Image, boxes: List[Dict], selected_ids: Optional[List[
         draw.text((x + 3, y - th - 2), caption, fill=(255, 255, 255))
     return im
 
-# -------- Streamlit App --------
+# Streamlit App
 
 @dataclass
 class AppState:

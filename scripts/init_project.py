@@ -20,7 +20,7 @@ classifier:
   device: auto
 detector:
   enabled: true
-  weights: rtdetr-l.pt
+  weights: yolov8n.pt
   conf: 0.25
   iou: 0.6
   max_det: 200

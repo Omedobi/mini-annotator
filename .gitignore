@@ -3,4 +3,5 @@ data/cache/
 data/exports/*
 runs/
 *.ipynb_checkpoints/
-.env    ## virtual env
+.env    
+** __init__.py
