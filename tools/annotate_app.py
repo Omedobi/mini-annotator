@@ -14,7 +14,7 @@ import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
 from ultralytics import YOLO
 import streamlit as st
-
+import open_clip 
 
 DEFAULT_LABELS = [
 "button",
@@ -102,7 +102,6 @@ def load_image(path: pathlib.Path, max_side: int = 768) -> Image.Image:
 
 class ZeroShotLabeler:
     def __init__(self, model_name: str = "ViT-B-32", pretrained: str = "openai", device: Optional[str] = None):
-        import open_clip  # lazy
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.model, _, self.preprocess = open_clip.create_model_and_transforms(model_name, pretrained=pretrained)
         self.tokenizer = open_clip.get_tokenizer(model_name)
@@ -231,7 +230,7 @@ def draw_boxes(img: Image.Image, boxes: List[Dict], selected_ids: Optional[List[
     for i, b in enumerate(boxes):
         x, y, w, h = b["bbox"]
         x2, y2 = x + w, y + h
-        width = 1 if i not in selset else 3  # emphasize accepted
+        width = 1 if i not in selset else 3  
         draw.rectangle([x, y, x2, y2], outline=(255, 255, 255), width=width)
         caption = f'#{i} {b.get("label","?")} {b.get("score",0):.2f}'
         tw, th = draw.textlength(caption), 10
