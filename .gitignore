@@ -5,3 +5,4 @@ runs/
 *.ipynb_checkpoints/
 .env    
 ** __init__.py
+* tools/cache

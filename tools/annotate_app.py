@@ -6,7 +6,7 @@ import math
 import hashlib
 import pathlib
 from dataclasses import dataclass
-from typing import List, Dict, Optional, Tuple, Any
+from typing import List, Dict, Optional, Tuple, Any, Literal
 import torch
 import tensorflow
 import numpy as np
@@ -150,7 +150,6 @@ class Detector:
         try:
             self.model = YOLO(model_name)  # supports 'rtdetr-l.pt', 'rtdetr-x.pt', 'yolov8n.pt'
         except Exception:
-            # fallback to CPU + tiny model
             self.model = YOLO("yolov8n.pt")
             self.model_name = "yolov8n.pt"
             self.device = "cpu"
@@ -220,16 +219,27 @@ def rank_images_by_uncertainty(paths: List[pathlib.Path], model: ZeroShotLabeler
 
 # Visualization
 
-def draw_boxes(img: Image.Image, boxes: List[Dict], selected_ids: Optional[List[int]] = None) -> Image.Image:
+def draw_boxes(img: Image.Image, boxes: List[Dict], selected_ids: Optional[List[int]] = None, *, color_mode: Literal["single", "by_selection"] = "single", color: Literal["red", "green"] = "red",) -> Image.Image:
     """
     Light boxes for all proposals; thicker for selected.
     """
     im = img.copy()
     draw = ImageDraw.Draw(im)
     selset = set(selected_ids or [])
+    
+    C_RED = (255, 0, 0)
+    C_GREEN = (0, 255, 0)
+    C_TEXT_BG = (0, 0, 0)
+    C_TEXT_FG = (255, 255, 255)
+    
+    single_color = C_GREEN if color == "green" else C_RED
     for i, b in enumerate(boxes):
         x, y, w, h = b["bbox"]
         x2, y2 = x + w, y + h
+        if color_mode == "by_selection":
+            edge = C_GREEN if i in selset else C_RED
+        else:
+            edge = single_color
         width = 1 if i not in selset else 3  
         draw.rectangle([x, y, x2, y2], outline=(255, 255, 255), width=width)
         caption = f'#{i} {b.get("label","?")} {b.get("score",0):.2f}'
@@ -424,7 +434,7 @@ def main():
 
     with col_l:
         st.subheader(f"Image {S.current_index+1} / {len(S.queue)}")
-        st.image(cur_img, use_column_width=True)
+        st.image(cur_img, width="content")
         with st.expander("Raw path"):
             st.code(cur_path)
 
@@ -444,7 +454,7 @@ def main():
         selected_ids = st.session_state[sel_key]
 
         overlay_all = draw_boxes(cur_img, det_result.get("detections", []), selected_ids=selected_ids)
-        st.image(overlay_all, caption="Proposals (bold = selected)", use_column_width=True)
+        st.image(overlay_all, caption="Proposals (bold = selected)", width="content")
 
     with col_r:
         st.subheader("Model Class Suggestions")
@@ -488,13 +498,13 @@ def main():
         refresh_clicked = c4.button("Refresh")
 
         if refresh_clicked:
-            st.experimental_rerun()
+            st.rerun()
         if back_clicked:
             S.current_index = max(0, S.current_index - 1)
-            st.experimental_rerun()
+            st.rerun()
         if skip_clicked:
             S.current_index = min(len(S.queue) - 1, S.current_index + 1)
-            st.experimental_rerun()
+            st.rerun()
 
         if save_clicked:
             labels_final = [l.strip() for l in user_labels]
@@ -530,7 +540,7 @@ def main():
             write_annotation_jsonl(record, ANNOTATIONS_JSONL)
             snapshot_csv(ANNOTATIONS_JSONL, ANNOTATIONS_CSV)
             S.current_index = min(len(S.queue) - 1, S.current_index + 1)
-            st.experimental_rerun()
+            st.rerun()
 
     with st.expander("Recent Annotations"):
         rows = read_annotations_jsonl(ANNOTATIONS_JSONL)

@@ -1,0 +1,62 @@
+{
+  "images": [],
+  "annotations": [],
+  "categories": [
+    {
+      "id": 1,
+      "name": "button"
+    },
+    {
+      "id": 2,
+      "name": "cancel icon"
+    },
+    {
+      "id": 3,
+      "name": "components"
+    },
+    {
+      "id": 4,
+      "name": "componentsb"
+    },
+    {
+      "id": 5,
+      "name": "dope"
+    },
+    {
+      "id": 6,
+      "name": "dopeb"
+    },
+    {
+      "id": 7,
+      "name": "dropdown"
+    },
+    {
+      "id": 8,
+      "name": "hamburger icon"
+    },
+    {
+      "id": 9,
+      "name": "input field"
+    },
+    {
+      "id": 10,
+      "name": "loading icon"
+    },
+    {
+      "id": 11,
+      "name": "love icon"
+    },
+    {
+      "id": 12,
+      "name": "radio"
+    },
+    {
+      "id": 13,
+      "name": "search icon"
+    },
+    {
+      "id": 14,
+      "name": "share icon"
+    }
+  ]
+}
