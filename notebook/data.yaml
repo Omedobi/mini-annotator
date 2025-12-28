@@ -1,0 +1,32 @@
+path: C:/Users/Legion/OneDrive/Documents/ML-Ops/mini-annotator/notebook/
+
+train: "C:/Users/Legion/OneDrive/Documents/ML-Ops/mini-annotator/notebook/data/train"
+val: "C:/Users/Legion/OneDrive/Documents/ML-Ops/mini-annotator/notebook/data/val"
+test: "C:/Users/Legion/OneDrive/Documents/ML-Ops/mini-annotator/notebook/data/test"
+
+nc: 23
+
+names: 
+  0: Dropdown
+  1: Exist
+  2: Face cap
+  3: Filter icon
+  4: Hamburger icon
+  5: Input field
+  6: Jacket
+  7: Loading Icon
+  8: Man
+  9: Search Icon
+  10: Slider
+  11: Sneakers
+  12: T shirt
+  13: Woman
+  14: button
+  15: cancel icon
+  16: clothing icon
+  17: dope
+  18: dopeb
+  19: love icon
+  20: radio
+  21: shareicon
+  22: socks
